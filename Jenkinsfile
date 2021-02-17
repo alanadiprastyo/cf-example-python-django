@@ -14,9 +14,7 @@ pipeline {
 		    script {
 			//sh "docker run --rm --volume $(pwd):/src hysnsec/safety:latest check -r requirements.txt --json > sca-scaning-safety.json"
                		//sh "docker run -v \$(pwd):/src --rm hysnsec/safety check -r requirements.txt --json > sca-scaning-safety.json"
-			sh "pip3 install safety"
 			sh  "/usr/local/bin/safety check -r requirements.txt --json"
-	    		archiveArtifacts artifacts: 'sca-scaning-safety.json', followSymlinks: false
 		    }
 	}
         }
