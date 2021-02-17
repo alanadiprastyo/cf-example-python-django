@@ -9,7 +9,7 @@ pipeline {
                 checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/alanadiprastyo/cf-example-python-django.git']]])
             }
         }
-        stage('SCA test safety'){
+        /*stage('SCA test safety'){
             steps{
 		    script {
 			//sh "docker run --rm --volume $(pwd):/src hysnsec/safety:latest check -r requirements.txt --json > sca-scaning-safety.json"
@@ -18,7 +18,7 @@ pipeline {
 			echo "successful"
 		    }
 	}
-        }
+        }*/
       stage('Code Quality Check via SonarQube') {
    	steps {
        		script {
