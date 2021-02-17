@@ -21,7 +21,7 @@ pipeline {
         }
         stage('SCA test python-taint'){
             steps{
-               		sh "docker run -v \$(pwd):/src --rm vickyrajagopal/python-taint-docker pyt . > sca-scaning-pyt.json  || true"
+               		sh "docker run -v \$(pwd):/src --rm vickyrajagopal/python-taint-docker pyt . -j > sca-scaning-pyt.json  || true"
 		    	archiveArtifacts artifacts: 'sca-scaning-pyt.json', onlyIfSuccessful: true //fingerprint: true
 			
 	}
