@@ -10,11 +10,11 @@ pipeline {
             }
         }
         stage('SCA test safety'){
-            steps{
+            //steps{
                 //sh '''
 		//docker run -v $(pwd):/src --rm hysnsec/safety check -r requirements.txt --json > sca-results.json
                 //'''
-            }
+            //}
         }
         stage('Unit Test'){
             steps{
