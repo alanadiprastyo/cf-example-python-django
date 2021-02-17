@@ -97,14 +97,15 @@ pipeline {
 	stage('DAST Nikto'){
 		steps{
 			echo "Scan use Nikto"
-			sh "docker run --rm -v \$(pwd):/tmp alpine/nikto -h routecloud.net -o nikto.json  || true"
-		    	archiveArtifacts artifacts: 'nikto.json', onlyIfSuccessful: true //fingerprint: true
+			sh "docker run --rm -v \$(pwd):/tmp alpine/nikto -h routecloud.net > nikto.txt  || true"
+		    	archiveArtifacts artifacts: 'nikto.txt', onlyIfSuccessful: true //fingerprint: true
 		}
 	}
 	stage('DAST Owasp Zap'){
 		steps{
 			echo "Scan use Owasp ZAP"
-			sh "docker run --rm -v \$(pwd):/tmp owasp/zap2docker-stable zap-baseline.py -t https://routecloud.net -J > zap.json  || true"
+			sh "docker run --rm -v \$(pwd):/tmp owasp/zap2docker-stable zap-baseline.py -t https://routecloud.net > zap.txt  || true"
+			//sh "docker run -v $(pwd):/zap/wrk/:rw -t owasp/zap2docker-stable zap-baseline.py     -t https://routecloud.net -g gen.conf -r testreport.html > zap.txt"
 		    	archiveArtifacts artifacts: 'zap.json', onlyIfSuccessful: true //fingerprint: true
 		}
 	}
