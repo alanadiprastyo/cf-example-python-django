@@ -27,9 +27,9 @@ pipeline {
 			
 	}
         }
-        stage('SCA test Bandit'){
+        stage('SAST test Bandit'){
             steps{
-		    	echo "SCA test Python Bandit"
+		    	echo "SAST test Python Bandit"
                		sh "docker run -v \$(pwd):/src --rm secfigo/bandit:latest bandit . -f json > sca-scaning-bandit.json  || true"
 		    	archiveArtifacts artifacts: 'sca-scaning-bandit.json', onlyIfSuccessful: true //fingerprint: true
 			
@@ -58,6 +58,7 @@ pipeline {
             steps{
                 sh '''
                 docker build -t demo-django .
+		docker tag demo-django quay.io/alanadiprastyo/demo-django:${env.BUILD_ID}
 		docker tag demo-django quay.io/alanadiprastyo/demo-django:latest
                 '''
             }
@@ -65,7 +66,8 @@ pipeline {
         stage('Push Docker Image'){
             steps{
                 sh '''
-                docker push quay.io/alanadiprastyo/demo-django:latest
+                docker push quay.io/alanadiprastyo/demo-django:${env.BUILD_ID}
+		docker push quay.io/alanadiprastyo/demo-django:latest
                 '''
             }
         }
@@ -73,11 +75,47 @@ pipeline {
 		steps{	
 			sh "echo 'scan image docker use ancore'"
 			script {
-			imageLineDev = 'quay.io/alanadiprastyo/demo-django'
+			imageLineDev = 'quay.io/alanadiprastyo/demo-django:${env.BUILD_ID}'
 			writeFile file: 'anchore_images', text: imageLineDev
 			anchore name: 'anchore_images'
 			}
 		}
         }
+	stage('Deploy to Dev'){
+		steps{
+			echo "deploy to dev"
+		}
+	}    
+	stage('Deploy to Staging'){
+		steps{
+			echo "deploy to staging"
+		}
+	}
+	stage('DAST NMAP'){
+		steps{
+			echo "Scan use NMAP"
+			sh "docker run --rm -v \$(pwd):/tmp uzyexe/nmap routecloud.net -oX nmap_out.xml  || true"
+		    	archiveArtifacts artifacts: 'nmap_out.xml', onlyIfSuccessful: true //fingerprint: true
+		}
+	}
+	stage('DAST Nikto'){
+		steps{
+			echo "Scan use Nikto"
+			sh "docker run --rm -v \$(pwd):/tmp alpine/nikto -h routecloud.net -o nikto.json  || true"
+		    	archiveArtifacts artifacts: 'nikto.json', onlyIfSuccessful: true //fingerprint: true
+		}
+	}
+	stage('DAST Owasp Zap'){
+		steps{
+			echo "Scan use Owasp ZAP"
+			sh "docker run --rm -v \$(pwd):/tmp owasp/zap2docker-stable zap-baseline.py -t https://routecloud.net -J > zap.json  || true"
+		    	archiveArtifacts artifacts: 'zap.json', onlyIfSuccessful: true //fingerprint: true
+		}
+	}
+	stage('Deploy to Prod'){
+		steps{
+			echo "Deploy to Prod"
+		}
+	}
     }
 }
