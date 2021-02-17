@@ -11,10 +11,12 @@ pipeline {
         }
         stage('SCA test safety'){
             steps{
-		//sh "docker run --rm --volume $(pwd):/src hysnsec/safety:latest check -r requirements.txt --json > sca-scaning-safety.json"
-               sh "docker run -v \$(pwd):/src --rm hysnsec/safety check -r requirements.txt --json > sca-scaning-safety.json"
-	    archiveArtifacts artifacts: 'sca-scaning-safety.json', followSymlinks: false
-            }
+		    script {
+			//sh "docker run --rm --volume $(pwd):/src hysnsec/safety:latest check -r requirements.txt --json > sca-scaning-safety.json"
+               		sh "docker run -v \$(pwd):/src --rm hysnsec/safety check -r requirements.txt --json > sca-scaning-safety.json"
+	    		archiveArtifacts artifacts: 'sca-scaning-safety.json', followSymlinks: false
+		    }
+	}
         }
       stage('Code Quality Check via SonarQube') {
    	steps {
