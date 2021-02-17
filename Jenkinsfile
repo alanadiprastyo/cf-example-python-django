@@ -19,10 +19,19 @@ pipeline {
 		    //}
 	}
         }
-        stage('SCA test python-taint'){
+        stage('SCA test pyt'){
             steps{
+		    	echo "SCA test Python Taint"
                		sh "docker run -v \$(pwd):/src --rm vickyrajagopal/python-taint-docker pyt . -j > sca-scaning-pyt.json  || true"
 		    	archiveArtifacts artifacts: 'sca-scaning-pyt.json', onlyIfSuccessful: true //fingerprint: true
+			
+	}
+        }
+        stage('SCA test Bandit'){
+            steps{
+		    	echo "SCA test Python Bandit"
+               		sh "docker run -v \$(pwd):/src --rm secfigo/bandit:latest bandit . -f json > sca-scaning-bandit.json  || true"
+		    	archiveArtifacts artifacts: 'sca-scaning-bandit.json', onlyIfSuccessful: true //fingerprint: true
 			
 	}
         }
