@@ -22,6 +22,13 @@ pipeline {
                 '''
             }
         }
+        stage('Scan Image use anchore'){
+            steps{
+		def imageLineDev = 'demo-django:latest'
+		writeFile file: 'anchore_images', text: imageLineDev
+		anchore name: 'anchore_images'
+            }
+        }
         stage('Push Docker Image'){
             steps{
                 sh '''
