@@ -90,8 +90,8 @@ pipeline {
 	stage('DAST NMAP'){
 		steps{
 			echo "Scan use NMAP"
-			sh "docker run --rm -v \$(pwd):/tmp uzyexe/nmap routecloud.net -oX nmap_out.xml  || true"
-		    	archiveArtifacts artifacts: 'nmap_out.xml', onlyIfSuccessful: true //fingerprint: true
+			sh "docker run --rm -v \$(pwd):/tmp uzyexe/nmap routecloud.net > nmap_out.txt  || true"
+		    	archiveArtifacts artifacts: 'nmap_out.txt', onlyIfSuccessful: true //fingerprint: true
 		}
 	}
 	stage('DAST Nikto'){
