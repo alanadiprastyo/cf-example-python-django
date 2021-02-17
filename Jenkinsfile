@@ -56,19 +56,15 @@ pipeline {
         }
         stage('Build Docker Image'){
             steps{
-                sh '''
-                docker build -t demo-django .
-		docker tag demo-django quay.io/alanadiprastyo/demo-django:${env.BUILD_ID}
-		docker tag demo-django quay.io/alanadiprastyo/demo-django:latest
-                '''
+                sh "docker build -t demo-django ."
+                sh "docker tag demo-django quay.io/alanadiprastyo/demo-django:${env.BUILD_ID}"
+		sh "docker tag demo-django quay.io/alanadiprastyo/demo-django:latest"
             }
         }
         stage('Push Docker Image'){
             steps{
-                sh '''
-                docker push quay.io/alanadiprastyo/demo-django:${env.BUILD_ID}
-		docker push quay.io/alanadiprastyo/demo-django:latest
-                '''
+                sh "docker push quay.io/alanadiprastyo/demo-django:${env.BUILD_ID}"
+		sh "docker push quay.io/alanadiprastyo/demo-django:latest"
             }
         }
         stage('Scan Image use anchore'){
