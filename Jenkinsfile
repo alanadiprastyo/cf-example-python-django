@@ -9,6 +9,13 @@ pipeline {
                 checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/alanadiprastyo/cf-example-python-django.git']]])
             }
         }
+        stage('SCA test safety'){
+            steps{
+                sh '''
+		safety check -r requirements.txt --json | tee safety_output.json
+                '''
+            }
+        }
         stage('Unit Test'){
             steps{
                 sh '''
