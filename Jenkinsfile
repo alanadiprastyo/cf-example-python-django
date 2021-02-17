@@ -14,7 +14,7 @@ pipeline {
 		    //script {
 			//sh "docker run -v \$(pwd):/src --rm hysnsec/safety check -r requirements.txt"
                		sh "docker run -v \$(pwd):/src --rm hysnsec/safety check -r requirements.txt --json > sca-scaning-safety.json  || true"
-		    	archiveArtifacts artifacts: 'sca-scaning-safety.json', followSymlinks: false
+		    	archiveArtifacts artifacts: 'sca-scaning-safety.json', onlyIfSuccessful: true //fingerprint: true
 			//sh  "/usr/local/bin/safety check -r requirements.txt --json"
 		    //}
 	}
