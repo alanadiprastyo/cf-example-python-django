@@ -71,7 +71,7 @@ pipeline {
 		steps{	
 			sh "echo 'scan image docker use ancore'"
 			script {
-			imageLineDev = 'quay.io/alanadiprastyo/demo-django:${env.BUILD_ID}'
+			imageLineDev = 'quay.io/alanadiprastyo/demo-django:latest'
 			writeFile file: 'anchore_images', text: imageLineDev
 			anchore name: 'anchore_images'
 			}
