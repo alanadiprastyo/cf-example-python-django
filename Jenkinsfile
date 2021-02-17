@@ -24,22 +24,22 @@ pipeline {
                 '''
             }
         }
-        stage('Scan Image use anchore'){
-		steps{	
-			sh "echo 'scan image docker use ancore'"
-			script {
-			imageLineDev = 'demo-django:latest'
-			writeFile file: 'anchore_images', text: imageLineDev
-			anchore name: 'anchore_images'
-			}
-		}
-        }
         stage('Push Docker Image'){
             steps{
                 sh '''
                 docker push quay.io/alanadiprastyo/demo-django:latest
                 '''
             }
+        }
+        stage('Scan Image use anchore'){
+		steps{	
+			sh "echo 'scan image docker use ancore'"
+			script {
+			imageLineDev = 'quay.io/alanadiprastyo/demo-django'
+			writeFile file: 'anchore_images', text: imageLineDev
+			anchore name: 'anchore_images'
+			}
+		}
         }
     }
 }
