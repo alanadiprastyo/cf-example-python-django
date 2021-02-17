@@ -1,5 +1,5 @@
 //deklarasi variable
-def imageLineDev = 'demo-django:latest'
+def imageLineDev = ""
 pipeline {
     agent any
    
