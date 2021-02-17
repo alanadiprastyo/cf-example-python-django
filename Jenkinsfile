@@ -15,6 +15,7 @@ pipeline {
 			//sh "docker run --rm --volume $(pwd):/src hysnsec/safety:latest check -r requirements.txt --json > sca-scaning-safety.json"
                		//sh "docker run -v \$(pwd):/src --rm hysnsec/safety check -r requirements.txt --json > sca-scaning-safety.json"
 			sh  "/usr/local/bin/safety check -r requirements.txt --json"
+			echo "successful"
 		    }
 	}
         }
