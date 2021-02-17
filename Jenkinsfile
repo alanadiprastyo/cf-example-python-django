@@ -7,58 +7,27 @@ pipeline {
                 checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/alanadiprastyo/cf-example-python-django.git']]])
             }
         }
-        stage('Build Maven'){
+        stage('Unit Test'){
             steps{
                 sh '''
-                export MAVEN_HOME=/opt/maven
-                export PATH=$PATH:$MAVEN_HOME/bin
-                mvn clean install
+		python -m unittest composeexample.utils
                 '''
             }
         }
         stage('Build Docker Image'){
             steps{
                 sh '''
-                export MAVEN_HOME=/opt/maven
-                export PATH=$PATH:$MAVEN_HOME/bin
-                mvn docker:build
+                docker build -t demo-django .
+		docker tag demo-django quay.io/alanadiprastyo/demo-django:latest
                 '''
             }
         }
         stage('Push Docker Image'){
             steps{
                 sh '''
-                docker push registry.lab-home.example.com/jaguar-java:latest
+                docker push quay.io/alanadiprastyo/demo-django:latest
                 '''
             }
         }
-        stage('Deploy ke Dev'){
-            steps{
-                sh '''
-		oc delete -f dc/dc-dev.yaml -n development
-                oc apply -f dc/dc-dev.yaml -n development
-                '''
-            }
-        }
-	stage('Approve Image ke Testing?'){
-            input {
-                message "Apakah Image dev akan di tag ke Testing?"
-                ok "Yes, Tag Image ke Testing"
-            }
-	   steps{
-		sh '''
-		docker tag registry.lab-home.example.com/jaguar-java:latest registry.lab-home.example.com/jaguar-java:testing
-		docker push registry.lab-home.example.com/jaguar-java:testing
-		'''
-	   }
-	  post{
-                success {
-                    echo 'Image Testing Berhasil di simpan ke registry '
-                }
-                failure {
-                    echo 'Image Testing Gagal di simpan ke registry'
-                }
-	  }
-	}
     }
 }
