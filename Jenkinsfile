@@ -12,7 +12,7 @@ pipeline {
         stage('SCA test safety'){
             steps{
 		    //script {
-			sh "docker run -v \$(pwd):/src --rm hysnsec/safety check"
+			sh "docker run -v \$(pwd):/src --rm hysnsec/safety check -r requirements.txt"
                		sh "docker run -v \$(pwd):/src --rm hysnsec/safety check -r requirements.txt --json > sca-scaning-safety.json"
 			//sh  "/usr/local/bin/safety check -r requirements.txt --json"
 		    //}
