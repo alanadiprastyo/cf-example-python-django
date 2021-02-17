@@ -19,7 +19,6 @@ pipeline {
       stage('Code Quality Check via SonarQube') {
    	steps {
        		script {
-		   withSonarQubeEnv("sonarqube-scanner) {
 		   sh '''/var/lib/jenkins/sonar-scanner/bin/sonar-scanner \
 		   -Dsonar.projectKey=demo-devsecops \
 		   -Dsonar.sources=. \
@@ -27,7 +26,6 @@ pipeline {
 		   -Dsonar.host.url=http://192.168.1.31:9000\
 		   -Dsonar.login=44c1e369a8e63f387d0935b95e1f4ddb018ec593'''
               		}
-		}
        		}
 	}
         stage('Unit Test'){
