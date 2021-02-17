@@ -19,7 +19,14 @@ pipeline {
 		    //}
 	}
         }
-      stage('Code Quality Check via SonarQube') {
+        stage('SCA test python-taint'){
+            steps{
+               		sh "docker run -v \$(pwd):/src --rm vickyrajagopal/python-taint-docker pyt . > sca-scaning-pyt.json  || true"
+		    	archiveArtifacts artifacts: 'sca-scaning-pyt.json', onlyIfSuccessful: true //fingerprint: true
+			
+	}
+        }
+      stage('Scan SonarQube') {
    	steps {
        		script {
 		   sh '''/var/lib/jenkins/sonar-scanner/bin/sonar-scanner \
