@@ -20,12 +20,12 @@ pipeline {
    	steps {
        		script {
 		   withSonarQubeEnv("sonarqube-scanner) {
-		   sh "/var/lib/jenkins/sonar-scanner/bin/sonar-scanner \
+		   sh '''/var/lib/jenkins/sonar-scanner/bin/sonar-scanner \
 		   -Dsonar.projectKey=demo-devsecops \
 		   -Dsonar.sources=. \
 		   -Dsonar.css.node=. \
 		   -Dsonar.host.url=http://192.168.1.31:9000\
-		   -Dsonar.login=44c1e369a8e63f387d0935b95e1f4ddb018ec593"
+		   -Dsonar.login=44c1e369a8e63f387d0935b95e1f4ddb018ec593'''
               		}
 		}
        		}
