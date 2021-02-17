@@ -1,6 +1,7 @@
 pipeline {
     agent any
-
+    
+   def imageLineDev = 'demo-django:latest'
     stages{
         stage('Checkout'){
             steps {
@@ -23,9 +24,10 @@ pipeline {
             }
         }
         stage('Scan Image use anchore'){
-		def imageLineDev = 'demo-django:latest'
+		steps{
 		writeFile file: 'anchore_images', text: imageLineDev
 		anchore name: 'anchore_images'
+		}
         }
         stage('Push Docker Image'){
             steps{
