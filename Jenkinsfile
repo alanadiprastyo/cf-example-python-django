@@ -106,7 +106,7 @@ pipeline {
 			echo "Scan use Owasp ZAP"
 			sh "docker run --rm -v \$(pwd):/tmp owasp/zap2docker-stable zap-baseline.py -t https://routecloud.net > zap.txt  || true"
 			//sh "docker run -v $(pwd):/zap/wrk/:rw -t owasp/zap2docker-stable zap-baseline.py     -t https://routecloud.net -g gen.conf -r testreport.html > zap.txt"
-		    	archiveArtifacts artifacts: 'zap.json', onlyIfSuccessful: true //fingerprint: true
+		    	archiveArtifacts artifacts: 'zap.txt', onlyIfSuccessful: true //fingerprint: true
 		}
 	}
 	stage('Deploy to Prod'){
