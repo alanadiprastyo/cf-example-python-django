@@ -53,7 +53,7 @@ items:
           deploymentconfig: demo-django
       spec:
         containers:
-        - image: quay.io/alanadiprastyo/demo-django:latest
+        - image: quay.io/alanadiprastyo/demo-django:UPDATE
           imagePullPolicy: IfNotPresent
           name: demo-django
           ports:
