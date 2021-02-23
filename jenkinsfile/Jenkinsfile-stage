@@ -1,0 +1,57 @@
+pipeline {
+    agent any
+   
+    stages{
+        stage('Tag Docker Image'){
+            steps{
+                sh "docker tag quay.io/alanadiprastyo/demo-django:latest quay.io/alanadiprastyo/demo-django:v1-testing.${env.BUILD_ID}"
+		sh "docker tag quay.io/alanadiprastyo/demo-django:latest quay.io/alanadiprastyo/demo-django:testing"
+		sh "docker push quay.io/alanadiprastyo/demo-django:v1-testing.${env.BUILD_ID}"
+		sh "docker push quay.io/alanadiprastyo/demo-django:testing"
+            }
+        }
+	stage('Deploy to Stage'){
+                input {
+                	message "Deploy to Stage Area?"
+                	ok "Yes, Deploy to Staging"
+            	}
+		steps{
+			echo "Deploy to Stage"
+                        sh "sed -i s/UPDATE/v1-testing.${env.BUILD_ID}/g dc/dc-django-stage.yaml"
+                        sh "oc delete -f dc/dc-django-stage.yaml"
+                        sh "oc apply -f dc/dc-django-stage.yaml"
+	
+		}
+	  	post{
+                	success {
+                    		echo 'Success deploy to staging'
+                	}
+               		failure {
+                    		echo 'Failed deploy to staging'
+                	}
+	  }
+
+	}    
+	stage('DAST NMAP'){
+		steps{
+			echo "Scan use NMAP"
+			sh "docker run --rm -v \$(pwd):/tmp uzyexe/nmap demo-django-alanadiprastyo-stage.apps.sandbox.x8i5.p1.openshiftapps.com > nmap_out.txt  || true"
+		    	archiveArtifacts artifacts: 'nmap_out.txt', onlyIfSuccessful: true //fingerprint: true
+		}
+	}
+	stage('DAST Nikto'){
+		steps{
+			echo "Scan use Nikto"
+			sh "docker run --rm -v \$(pwd):/tmp alpine/nikto -h demo-django-alanadiprastyo-stage.apps.sandbox.x8i5.p1.openshiftapps.com > nikto.txt  || true"
+		    	archiveArtifacts artifacts: 'nikto.txt', onlyIfSuccessful: true //fingerprint: true
+		}
+	}
+	stage('DAST Owasp Zap'){
+		steps{
+			echo "Scan use Owasp ZAP"
+			sh "docker run --rm -v \$(pwd):/tmp owasp/zap2docker-stable zap-baseline.py -t http://demo-django-alanadiprastyo-stage.apps.sandbox.x8i5.p1.openshiftapps.com > zap.txt  || true"
+		    	archiveArtifacts artifacts: 'zap.txt', onlyIfSuccessful: true //fingerprint: true
+		}
+	}
+    }
+}

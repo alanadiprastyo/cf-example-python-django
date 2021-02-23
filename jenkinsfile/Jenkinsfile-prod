@@ -1,0 +1,34 @@
+pipeline {
+    agent any
+   
+    stages{
+        stage('Tag Docker Image'){
+            steps{
+                sh "docker tag quay.io/alanadiprastyo/demo-django:testing quay.io/alanadiprastyo/demo-django:v1-prod.${env.BUILD_ID}"
+		sh "docker push quay.io/alanadiprastyo/demo-django:v1-prod.${env.BUILD_ID}"
+            }
+        }
+	stage('Deploy to Stage'){
+                input {
+                	message "Deploy to Stage Area?"
+                	ok "Yes, Deploy to Staging"
+            	}
+		steps{
+			echo "Deploy to Stage"
+                        sh "sed -i s/UPDATE/v1-prod.${env.BUILD_ID}/g dc/dc-django-prod.yaml"
+                        sh "oc delete -f dc/dc-django-stage.yaml"
+                        sh "oc apply -f dc/dc-django-stage.yaml"
+	
+		}
+	  	post{
+                	success {
+                    		echo 'Success deploy to prod'
+                	}
+               		failure {
+                    		echo 'Failed deploy to prod'
+                	}
+	  }
+
+	}    
+    }
+}
