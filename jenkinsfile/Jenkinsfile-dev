@@ -13,9 +13,7 @@ pipeline {
         stage('Unit Test'){
             steps{
                 sh '''
-		pip3 install pipenv
-		/usr/local/bin/pipenv shell
-                python manage.py test
+                python3 manage.py test
                 '''
             }
         }
