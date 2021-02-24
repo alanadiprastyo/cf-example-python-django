@@ -16,8 +16,8 @@ pipeline {
 		steps{
 			echo "Deploy to Stage"
                         sh "sed -i s/UPDATE/v1-prod.${env.BUILD_ID}/g dc/dc-django-prod.yaml"
-                        sh "oc delete -f dc/dc-django-stage.yaml"
-                        sh "oc apply -f dc/dc-django-stage.yaml"
+                        sh "oc delete -f dc/dc-django-prod.yaml"
+                        sh "oc apply -f dc/dc-django-prod.yaml"
 	
 		}
 	  	post{
