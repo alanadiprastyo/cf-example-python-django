@@ -8,13 +8,13 @@ pipeline {
 		sh "docker push quay.io/alanadiprastyo/demo-django:v1-prod.${env.BUILD_ID}"
             }
         }
-	stage('Deploy to Stage'){
+	stage('Deploy to Prod'){
                 input {
-                	message "Deploy to Stage Area?"
-                	ok "Yes, Deploy to Staging"
+                	message "Deploy to Production?"
+                	ok "Yes, Deploy to Production"
             	}
 		steps{
-			echo "Deploy to Stage"
+			echo "Deploy to Prod"
                         sh "sed -i s/UPDATE/v1-prod.${env.BUILD_ID}/g dc/dc-django-prod.yaml"
                         sh "oc delete -f dc/dc-django-prod.yaml"
                         sh "oc apply -f dc/dc-django-prod.yaml"
