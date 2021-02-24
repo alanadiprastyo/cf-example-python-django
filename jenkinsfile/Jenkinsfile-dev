@@ -13,6 +13,9 @@ pipeline {
         stage('Unit Test'){
             steps{
                 sh '''
+		pip3 install pipenv
+		pipenv shell
+		pipenv install django~=3.1.0		
                 python manage.py test
                 '''
             }
