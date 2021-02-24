@@ -13,7 +13,7 @@ pipeline {
         stage('Unit Test'){
             steps{
                 sh '''
-                python -m unittest composeexample.utils
+                python manage.py test
                 '''
             }
         }
