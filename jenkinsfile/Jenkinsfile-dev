@@ -10,13 +10,20 @@ pipeline {
                 checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/alanadiprastyo/cf-example-python-django.git']]])
             }
         }
-        stage('SCA test safety'){
+        stage('Unit Test'){
+            steps{
+                sh '''
+                python -m unittest composeexample.utils
+                '''
+            }
+        }
+        stage('Dependency Check with Python Safety'){
             steps{
                		sh "docker run -v \$(pwd):/src --rm hysnsec/safety check -r requirements.txt --json > sca-scaning-safety.json  || true"
 		    	archiveArtifacts artifacts: 'sca-scaning-safety.json', onlyIfSuccessful: true //fingerprint: true
 	}
         }
-        stage('SCA test pyt'){
+        stage('Static Analysis with python-taint'){
             steps{
 		    	echo "SCA test Python Taint"
                		sh "docker run -v \$(pwd):/src --rm vickyrajagopal/python-taint-docker pyt . -j > sca-scaning-pyt.json  || true"
@@ -24,7 +31,7 @@ pipeline {
 			
 	}
         }
-        stage('SAST test Bandit'){
+        stage('Python Bandit Security Scan'){
             steps{
 		    	echo "SAST test Python Bandit"
                		sh "docker run -v \$(pwd):/src --rm secfigo/bandit:latest bandit . -f json > sca-scaning-bandit.json  || true"
@@ -32,7 +39,7 @@ pipeline {
 			
 	}
         }
-      stage('Scan SonarQube') {
+      stage('Static Analysis with SonarQube') {
    	steps {
        		script {
 		   sh '''/var/lib/jenkins/sonar-scanner/bin/sonar-scanner \
@@ -44,13 +51,6 @@ pipeline {
               		}
        		}
 	}
-        stage('Unit Test'){
-            steps{
-                sh '''
-		python -m unittest composeexample.utils
-                '''
-            }
-        }
         stage('Build Docker Image'){
             steps{
                 sh "docker build -t demo-django ."
@@ -58,13 +58,13 @@ pipeline {
 		sh "docker tag demo-django quay.io/alanadiprastyo/demo-django:latest"
             }
         }
-        stage('Push Docker Image'){
+        stage('Push Docker Image to Quay'){
             steps{
                 sh "docker push quay.io/alanadiprastyo/demo-django:v1.${env.BUILD_ID}"
 		sh "docker push quay.io/alanadiprastyo/demo-django:latest"
             }
         }
-        stage('Scan Image use anchore'){
+        stage('Scan Image with anchore'){
 		steps{	
 			sh "echo 'scan image docker use ancore'"
 			script {
@@ -83,5 +83,6 @@ pipeline {
 		}
 	}    
 	}
-    }
 }
+
+

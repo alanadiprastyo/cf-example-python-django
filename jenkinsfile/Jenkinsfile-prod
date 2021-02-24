@@ -2,7 +2,7 @@ pipeline {
     agent any
    
     stages{
-        stage('Tag Docker Image'){
+        stage('Tag Docker Image to Prod'){
             steps{
                 sh "docker tag quay.io/alanadiprastyo/demo-django:testing quay.io/alanadiprastyo/demo-django:v1-prod.${env.BUILD_ID}"
 		sh "docker push quay.io/alanadiprastyo/demo-django:v1-prod.${env.BUILD_ID}"
