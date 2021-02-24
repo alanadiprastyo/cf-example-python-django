@@ -15,7 +15,6 @@ pipeline {
                 sh '''
 		pip3 install pipenv
 		/usr/local/bin/pipenv shell
-		/usr/local/bin/pipenv install django~=3.1.0		
                 python manage.py test
                 '''
             }
